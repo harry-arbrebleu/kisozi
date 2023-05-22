@@ -2,52 +2,91 @@
 \usepackage{luatexja}
 \usepackage{amsmath, amssymb, type1cm, amsfonts, latexsym, mathtools, bm, amsthm, url, siunitx}
 \usepackage{multirow, hyperref, longtable, dcolumn, mathtools, tablefootnote}
-\usepackage{tabularx, footmisc}
+\usepackage{tabularx, footmisc, mhchem}
 \usepackage{colortbl, here, usebib, microtype}
 \usepackage{graphicx}
 \usepackage[top = 35.1truemm, bottom = 30truemm, left = 30truemm, right = 30truemm]{geometry}
 \usepackage{luatexja-fontspec}
 \usepackage{OldStandard}
-\setcounter{tocdepth}{3}
+% フォントを指定するはここから
+% \usepackage[T1]{fontenc}
+% \renewcommand*\oldstylenums[1]{\textosf{#1}}
+% \setmainfont[Ligatures=TeX]{ShipporiMincho-OTF-Regular}
+% \setsansfont[Ligatures=TeX]{ShipporiMincho-OTF-Regular}
+% \setmainjfont[BoldFont=ShipporiMincho-OTF-Bold]{ShipporiMincho-OTF-Regular}
+% \setsansjfont{ShipporiMincho-OTF-Regular}
+% \newjfontfamily\jisninety[CJKShape=JIS1990]{ShipporiMincho-OTF-Bold}
+% ここまでのコメントを外す
+\renewcommand{\r}[1]{\mathrm{#1}}
+\renewcommand{\c}{\si{\degreeCelsius}}
+\renewcommand{\d}{\r{d}}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\renewcommand{\d}{\mathrm{d}}
-% \bibinput{hogeref}
-
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\newcommand{\combination}[2]{{}_{#1} \mathrm{C}_{#2}}
+\newcommand{\divd}[2]{
+  \newcounter{s}
+  \newcounter{r}
+  \setcounter{s}{0}
+  \setcounter{r}{#1}
+  \loop
+    \ifnum \value{r}>#2
+      \addtocounter{s}{1}
+      \addtocounter{r}{-#2}
+  \repeat
+}
+\newcounter{y}
+\newcounter{mn}
+\newcounter{dy}
+\newcounter{h}
+\newcounter{m}
+\divd{\number\time}{60}
+\setcounter{y}{\number\year}
+\setcounter{mn}{\number\month}
+\setcounter{dy}{\number\day}
+\setcounter{h}{\value{s}}
+\setcounter{m}{\value{r}}
+\setcounter{tocdepth}{3}
+\mathtoolsset{showonlyrefs = true}
+\makeatletter
+\@addtoreset{equation}{subsection}
+\makeatother
+% \bibinput{hogeref}ここにbibtexファイルの名前を入れる．拡張子は書かない
 \title{理工学基礎実験レポート}
-\author{}
 \date{}
+\author{}
 \begin{document}
   \maketitle
   \begin{table}[H]
     \begin{center}
-      \begin{tabularx}{150mm}{|X|X|}
+      \begin{tabularx}{150mm}{|p{60mm}|X|}
         \hline
-        実験日 & 2023年月日 (曜日)(午前午後) \\ \hline
-        実験題目 &  \\ \hline
+        \multirow{2}{*}{実験日} & \multirow{2}{*}{2023年hoge月hoge日 (hoge曜)(午hoge)} \\
+        & \\ \hline
+        \multirow{3}{*}{実験題目} & \multirow{3}{*}{\large{hoge}} \\
+        & \\
+        & \\ \hline
       \end{tabularx}
     \end{center}
     \begin{center}
       \begin{tabularx}{150mm}{|X|p{30mm}|X|X|X|X|}
         \hline
-        学科 &  & クラス &  & 学籍番号 &  \\ \hline
-        報告者氏名 & \multicolumn{5}{c|}{} \\ \hline
+        学科 & hoge & クラス & hoge & 学籍番号 & hoge \\ \hline
+        報告者氏名 & \multicolumn{5}{c|}{your name} \\ \hline
       \end{tabularx}
     \end{center}
     \begin{center}
       \begin{tabularx}{150mm}{|p{40mm}|X|X|}
         \hline
-        \multirow{5}{*}{共同実験者} & & \\ \cline{2-3}
-        & & \\ \cline{2-3}
-        & &\\ \cline{2-3}
-        & & \\ \cline{2-3}
-        & & \\ \cline{2-3}
+        \multirow{4}{*}{共同実験者} &  &  \\ \cline{2-3}
+        & &  \\ \cline{2-3}
+        & &  \\ \cline{2-3}
         & & \\ \hline
       \end{tabularx}
     \end{center}
     \begin{center}
       \begin{tabularx}{150mm}{|p{60mm}|X|}
         \hline
-        レポート提出日 & 2023年月日時分 \\ \hline
+        レポート提出日 & $\the\value{y}$年$\the\value{mn}$月$\the\value{dy}$日$\the\value{h}$時$\the\value{m}$分 \\ \hline
         レポート再提出日 &  \\ \hline
         &  \\ \hline
       \end{tabularx}
@@ -55,22 +94,26 @@
     \begin{flushleft}
       \begin{tabularx}{75mm}{|X|X|}
         \hline
-        室温 & $T\si{\degreeCelsius}$ \\ \hline
-        湿度 & $H\ \%$ \\ \hline
-        気圧 & $P\ \mathrm{hPa}$ \\ \hline
+        室温 & $\ \c$ \\ \hline
+        湿度 & $\ \%$ \\ \hline
+        気圧 & $\ \r{hPa}$ \\ \hline
       \end{tabularx}
     \end{flushleft}
   \end{table}
   \thispagestyle{empty}
   \addtocounter{page}{-1}
   \clearpage
-  \tableofcontents
-  \thispagestyle{empty}
-  \addtocounter{page}{-1}
-  \clearpage
+  % \tableofcontents
+  % \thispagestyle{empty}
+  % \addtocounter{page}{-1}
+  % \clearpage
   \pagestyle{plain}
-  % ここから本文
-  % ここまで本文
+  \section{目的}
+  \section{実験原理}
+  \section{実験方法}
+  \section{考察}
+  \section{結論}
+  % ここに参考文献の出力
   % \bibliographystyle{jipsj}
   % \bibliography{hogeref}
 \end{document}
