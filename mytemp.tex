@@ -1,66 +1,75 @@
 \documentclass{ltjsarticle}
+% \documentclass[draft]{ltjsarticle}% この行のコメントを外すと画像が枠だけ表示され，コンパイルが早くなります
 \usepackage{luatexja}
 \usepackage{amsmath, amssymb, type1cm, amsfonts, latexsym, mathtools, bm, amsthm, url, siunitx}
-\usepackage{multirow, hyperref, longtable, dcolumn, mathtools, tablefootnote}
-\usepackage{tabularx, footmisc, mhchem}
-\usepackage{colortbl, here, usebib, microtype}
-\usepackage{graphicx}
+\usepackage{multirow, hyperref, longtable, dcolumn, tablefootnote}
+\usepackage{tabularx, footmisc, colortbl, here, usebib, microtype}
+\usepackage{graphicx, luacode, caption, fancyhdr}
 \usepackage[top = 35.1truemm, bottom = 30truemm, left = 30truemm, right = 30truemm]{geometry}
-\usepackage{luatexja-fontspec}
-\usepackage{OldStandard}
-% フォントを指定するはここから
-% \usepackage[T1]{fontenc}
+\usepackage{luatexja-fontspec, ascmac, fancybox}
+\usepackage{chemmacros, upgreek, colortbl}
+\usepackage[version=4]{mhchem}
+\chemsetup{ modules = all }
 % \renewcommand*\oldstylenums[1]{\textosf{#1}}
 % \setmainfont[Ligatures=TeX]{ShipporiMincho-OTF-Regular}
 % \setsansfont[Ligatures=TeX]{ShipporiMincho-OTF-Regular}
 % \setmainjfont[BoldFont=ShipporiMincho-OTF-Bold]{ShipporiMincho-OTF-Regular}
 % \setsansjfont{ShipporiMincho-OTF-Regular}
 % \newjfontfamily\jisninety[CJKShape=JIS1990]{ShipporiMincho-OTF-Bold}
-% ここまでのコメントを外す
+\newcolumntype{t}{!{\vrule width 0.1pt}} % 細い縦線の定義
+\newcolumntype{b}{!{\vrule width 1.5pt}} % 太い縦線の定義
 \renewcommand{\r}[1]{\mathrm{#1}}
 \renewcommand{\c}{\si{\degreeCelsius}}
 \renewcommand{\d}{\r{d}}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\theequation}{\thesubsection.\arabic{equation}}
+\renewcommand{\footrulewidth}{0.4pt}
+\newcommand{\mar}[1]{\textcircled{\scriptsize #1}}
 \newcommand{\combination}[2]{{}_{#1} \mathrm{C}_{#2}}
-\newcommand{\divd}[2]{
-  \newcounter{s}
-  \newcounter{r}
-  \setcounter{s}{0}
-  \setcounter{r}{#1}
-  \loop
-    \ifnum \value{r}>#2
-      \addtocounter{s}{1}
-      \addtocounter{r}{-#2}
-  \repeat
+\newcommand{\thline}{\noalign{\hrule height 0.1pt}} % 細い横線の正義
+\newcommand{\bhline}{\noalign{\hrule height 1.5pt}} % 太い横線の定義
+\newcommand{\Rnum}[1]{
+  \ifnum #1 = 1
+    I
+  \fi
+  \ifnum #1 = 2
+    I\hspace{-1.2pt}I
+  \fi
+  \ifnum #1 = 3
+    I\hspace{-1.2pt}I\hspace{-1.2pt}I
+  \fi
+  \ifnum #1 = 4
+    I\hspace{-1.2pt}V
+  \fi
+  \ifnum #1 = 5
+    V
+  \fi
+  \ifnum #1 = 6
+    V\hspace{-1.2pt}I
+  \fi
+  \ifnum #1 = 7
+    V\hspace{-1.2pt}I\hspace{-1.2pt}I
+  \fi
+  \ifnum #1 = 8
+    V\hspace{-1.2pt}I\hspace{-1.2pt}I\hspace{-1.2pt}I
+  \fi
+  \ifnum #1 = 9
+    I\hspace{-1.2pt}X
+  \fi
+  \ifnum #1 = 10
+    X
+  \fi
 }
-\newcounter{y}
-\newcounter{mn}
-\newcounter{dy}
-\newcounter{h}
-\newcounter{m}
-\divd{\number\time}{60}
-\setcounter{y}{\number\year}
-\setcounter{mn}{\number\month}
-\setcounter{dy}{\number\day}
-\setcounter{h}{\value{s}}
-\setcounter{m}{\value{r}}
-\setcounter{tocdepth}{3}
-\mathtoolsset{showonlyrefs = true}
-\makeatletter
-\@addtoreset{equation}{subsection}
-\makeatother
-% \bibinput{hogeref}ここにbibtexファイルの名前を入れる．拡張子は書かない
-\title{理工学基礎実験レポート}
-\date{}
-\author{}
-\begin{document}
+\newcommand{\cover}{
+  \title{理工学基礎実験レポート}
+  \date{}
+  \author{}
   \maketitle
   \begin{table}[H]
     \begin{center}
       \begin{tabularx}{150mm}{|p{60mm}|X|}
         \hline
-        \multirow{2}{*}{実験日} & \multirow{2}{*}{2023年hoge月hoge日 (hoge曜)(午hoge)} \\
+        \multirow{2}{*}{実験日} & \multirow{2}{*}{\the\value{year}年\the\value{month}月\the\value{day}日 (hoge曜)(午hoge)} \\
         & \\ \hline
         \multirow{3}{*}{実験題目} & \multirow{3}{*}{\large{hoge}} \\
         & \\
@@ -78,15 +87,15 @@
       \begin{tabularx}{150mm}{|p{40mm}|X|X|}
         \hline
         \multirow{4}{*}{共同実験者} &  &  \\ \cline{2-3}
-        & &  \\ \cline{2-3}
-        & &  \\ \cline{2-3}
+        & & \\ \cline{2-3}
+        & & \\ \cline{2-3}
         & & \\ \hline
       \end{tabularx}
     \end{center}
     \begin{center}
       \begin{tabularx}{150mm}{|p{60mm}|X|}
         \hline
-        レポート提出日 & $\the\value{y}$年$\the\value{mn}$月$\the\value{dy}$日$\the\value{h}$時$\the\value{m}$分 \\ \hline
+        レポート提出日 & \myCurrentTime \\ \hline
         レポート再提出日 &  \\ \hline
         &  \\ \hline
       \end{tabularx}
@@ -94,26 +103,68 @@
     \begin{flushleft}
       \begin{tabularx}{75mm}{|X|X|}
         \hline
-        室温 & $\ \c$ \\ \hline
-        湿度 & $\ \%$ \\ \hline
-        気圧 & $\ \r{hPa}$ \\ \hline
+        室温 & $hoge\ \c$ \\ \hline
+        湿度 & $\the\value{hum}\ \%$ \\ \hline
+        気圧 & $\the\value{bar}\ \r{hPa}$ \\ \hline
       \end{tabularx}
     \end{flushleft}
   \end{table}
   \thispagestyle{empty}
   \addtocounter{page}{-1}
   \clearpage
-  % \tableofcontents
-  % \thispagestyle{empty}
-  % \addtocounter{page}{-1}
-  % \clearpage
-  \pagestyle{plain}
-  \section{目的}
+  \pagestyle{fancy}
+  \chead{理工学基礎実験レポート}
+  \rhead{\thepage}
+  \cfoot{}
+  \rfoot{hoge(学籍番号\ hoge(名前))}
+}
+\setcounter{tocdepth}{3}
+\mathtoolsset{showonlyrefs = true}
+\makeatletter
+\@addtoreset{equation}{subsubsection}
+\makeatother
+\begin{luacode*}
+  function my_current_time()
+    tex.sprint(os.date("%Y年%m月%d日%H時%M分"))
+  end
+\end{luacode*}
+\begin{luacode*}
+  function avg(x, y)
+    tex.sprint((x + y) / 2)
+  end
+\end{luacode*}
+\newcommand*{\myCurrentTime}{
+  \directlua{ my_current_time() }
+}
+\newcommand*{\myAvg}[2]{
+  \directlua{ avg(#1, #2) }
+}
+\newcounter{year}
+\newcounter{month}
+\newcounter{day}
+\newcounter{temp}
+\newcounter{hum}
+\newcounter{bar}
+
+% \setcounter{year}{hoge}
+% \setcounter{month}{hoge}
+% \setcounter{day}{hoge}
+% \setcounter{hum}{hoge}
+% \setcounter{bar}{hoge}
+
+% \bibinput{hogeref}
+
+\title{理工学基礎実験レポート}
+\date{}
+\author{}
+\begin{document}
+  \cover
   \section{実験原理}
   \section{実験方法}
+  \section{実験結果}
   \section{考察}
+  \section{課題}
   \section{結論}
-  % ここに参考文献の出力
   % \bibliographystyle{jipsj}
   % \bibliography{hogeref}
 \end{document}
